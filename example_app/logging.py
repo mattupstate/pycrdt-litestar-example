@@ -3,7 +3,7 @@ import logging
 import structlog
 
 
-def configure_logging():
+def configure_logging(level: str = "INFO"):
     structlog.configure(
         processors=[
             structlog.contextvars.merge_contextvars,
@@ -13,7 +13,9 @@ def configure_logging():
             structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S", utc=False),
             structlog.dev.ConsoleRenderer(),
         ],
-        wrapper_class=structlog.make_filtering_bound_logger(logging.NOTSET),
+        wrapper_class=structlog.make_filtering_bound_logger(
+            logging._nameToLevel.get(level.upper())
+        ),
         context_class=dict,
         logger_factory=structlog.PrintLoggerFactory(),
         cache_logger_on_first_use=False,

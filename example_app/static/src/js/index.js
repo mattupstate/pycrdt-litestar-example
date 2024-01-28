@@ -6,7 +6,7 @@ import 'codemirror/mode/javascript/javascript.js'
 import '../css/codemirror.css'
 
 const ydoc = new Y.Doc()
-const provider = new WebsocketProvider('ws://localhost:8000/ws', 'hello', ydoc)
+const provider = new WebsocketProvider('ws://localhost:8000/ws', 'my-document', ydoc)
 const yText = ydoc.getText('codemirror')
 
 const editorContainer = document.querySelector('#editor')

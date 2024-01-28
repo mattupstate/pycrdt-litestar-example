@@ -1,34 +1,34 @@
-from playwright.sync_api import BrowserContext, Page, expect
+from playwright.sync_api import BrowserContext, Page
 
 from conftest import ServerInfo
 
 
+def codemirror_value(page: Page):
+    return page.evaluate("() => window.myEditor.getValue()")
+
+
 def test_has_title(app_server: ServerInfo, context: BrowserContext):
     # Peter does this
-    first_page = context.new_page()
-    first_page.goto(app_server.uri)
+    peters_page = context.new_page()
+    peters_page.goto(app_server.uri)
 
-    codemirror_value = first_page.evaluate("() => window.myEditor.getValue()")
-    assert codemirror_value == "", "codemirror should be empty"
-    first_page.get_by_role("textbox").fill("Peter")
-    codemirror_value = first_page.evaluate("() => window.myEditor.getValue()")
-    assert codemirror_value == "Peter"
+    assert codemirror_value(peters_page) == ""
+
+    peters_page.get_by_role("textbox").fill("Peter was here.")
+    assert codemirror_value(peters_page) == "Peter was here."
 
     # Then Mary does this
-    second_page = context.new_page()
-    second_page.goto(app_server.uri)
+    marys_page = context.new_page()
+    marys_page.goto(app_server.uri)
 
-    codemirror_value = second_page.evaluate("() => window.myEditor.getValue()")
-    assert codemirror_value == "Peter"
+    assert codemirror_value(marys_page) == "Peter was here."
 
-    textfield = second_page.get_by_role("textbox")
+    textfield = marys_page.get_by_role("textbox")
     textfield.focus()
-    second_page.keyboard.press("End")
-    textfield.type(" Mary")
+    marys_page.keyboard.press("End")
+    textfield.type(" Mary was here.")
 
-    codemirror_value = second_page.evaluate("() => window.myEditor.getValue()")
-    assert codemirror_value == "Peter Mary"
+    assert codemirror_value(marys_page) == "Peter was here. Mary was here."
 
-    # Then Peter should also see this
-    codemirror_value = first_page.evaluate("() => window.myEditor.getValue()")
-    assert codemirror_value == "Peter Mary"
+    # Peter should then see this
+    assert codemirror_value(peters_page) == "Peter was here. Mary was here."

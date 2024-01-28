@@ -1,12 +1,13 @@
+import socket
+
 from dataclasses import dataclass
 from multiprocessing import Process
 
 import pytest
-import uvicorn
 
 from testcontainers.redis import RedisContainer
 
-from example_app.asgi import app
+from example_app.cli import _run
 
 
 @dataclass
@@ -15,22 +16,36 @@ class ServerInfo:
     port: int
 
 
+def random_port():
+    sock = socket.socket()
+    sock.bind(("", 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    return port
+
+
 @pytest.fixture(scope="session")
 def redis_server() -> ServerInfo:
-    container = RedisContainer()
+    port = random_port()
+    container = RedisContainer().with_bind_ports(6379, port)
     container.start()
-    port = 6379
-    yield ServerInfo(uri=f"redis://127.0.0.1:{port}", port=port)
+    yield ServerInfo(uri=f"redis://127.0.0.1:{port}/0", port=port)
     container.stop()
 
 
 @pytest.fixture(scope="session")
 def app_server(redis_server: ServerInfo) -> ServerInfo:
-    port = 8000
+    port = random_port()
     proc = Process(
-        target=uvicorn.run,
-        args=(app,),
-        kwargs={"host": "127.0.0.1", "port": port, "log_level": "debug"},
+        target=_run,
+        kwargs={
+            "host": "127.0.0.1",
+            "port": port,
+            "redis_uri": redis_server.uri,
+            "debug": True,
+            "reload": False,
+            "log_level": "debug",
+        },
         daemon=True,
     )
     proc.start()

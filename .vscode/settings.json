@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.venv": true,
+        "**/bundles/*.js": true,
+        "**/node_modules": true
+    },
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": true
+}

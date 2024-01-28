@@ -1,0 +1,24 @@
+{
+  "name": "example-app",
+  "version": "0.1.0",
+  "description": "Example Litestar app using channels plugin and pycrdt",
+  "main": "webpack.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "codemirror": "^5.65.16",
+    "css-loader": "^6.9.1",
+    "style-loader": "^3.3.4",
+    "webpack": "^5.89.0",
+    "webpack-bundle-tracker": "^3.0.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-manifest-plugin": "^5.0.0",
+    "y-codemirror": "^3.0.1",
+    "y-websocket": "^1.5.3",
+    "yjs": "^13.6.11"
+  },
+  "scripts": {},
+  "author": "",
+  "license": "MIT"
+}

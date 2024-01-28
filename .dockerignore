@@ -1,0 +1,13 @@
+.git
+.gitignore
+.nvmrc
+.pytest*
+.python-version
+.venv
+.vscode
+__pycache__
+node_modules
+pytest.ini
+test-results
+example_app/static/bundles
+

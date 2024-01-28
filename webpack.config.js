@@ -6,7 +6,7 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 module.exports = {
     context: __dirname,
     entry: {
-        "main": "./example_app/static/src/js/index.js",
+        "main": "./static/js/index.js",
     },
     output: {
         path: path.resolve(__dirname, "example_app/static/bundles/"),

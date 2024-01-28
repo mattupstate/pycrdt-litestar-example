@@ -15,7 +15,7 @@ def cli():
 @cli.command(help="Run the web server")
 @click.option("--host", default="0.0.0.0", help="Host to bind to")
 @click.option("--port", default=8000, help="Port to bind to")
-@click.option("--redis-uri", default="redis://127.0.0.1:6379/0", help="Redis URI")
+@click.option("--redis-uri", default="redis://redis:6379/0", help="Redis URI")
 @click.option("--debug", is_flag=True, default=False, help="Enable debug mode")
 @click.option("--reload", is_flag=True, default=False, help="Reload code on changes")
 @click.option("--log-level", default="info", help="Log level")

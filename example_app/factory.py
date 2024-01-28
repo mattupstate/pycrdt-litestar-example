@@ -17,7 +17,7 @@ def create_redis_client(uri: str):
 
 @dataclass
 class AppOptions:
-    redis_uri: str
+    redis_uri: str = "redis://redis:6379/0"
 
 
 def create_app(options: AppOptions):

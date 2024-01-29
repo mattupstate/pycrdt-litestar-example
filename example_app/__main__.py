@@ -1,4 +1,4 @@
-from example_app.cli import run
+from example_app.cli import cli
 
 if __name__ == "__main__":
-    run()
+    cli()

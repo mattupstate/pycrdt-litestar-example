@@ -3,8 +3,8 @@ import asyncio
 import click
 import uvicorn
 
-from example_app.factory import AppOptions, create_app
 from example_app.logging import configure_logging
+from example_app.server import run_server
 
 
 @click.group()
@@ -23,20 +23,4 @@ def run(
     host: str, port: int, redis_uri: str, debug: bool, reload: bool, log_level: str
 ):
     configure_logging(log_level)
-    _run(host, port, redis_uri, debug, reload, log_level)
-
-
-def _run(
-    host: str, port: int, redis_uri: str, debug: bool, reload: bool, log_level: str
-):
-    options = AppOptions(redis_uri=redis_uri)
-    app = create_app(options)
-    config = uvicorn.Config(
-        app=app,
-        host=host,
-        port=port,
-        log_level=(log_level.lower()),
-        reload=reload,
-    )
-    server = uvicorn.Server(config)
-    asyncio.run(server.serve())
+    run_server(host, port, redis_uri, debug, reload, log_level)

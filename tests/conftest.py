@@ -7,7 +7,7 @@ import pytest
 
 from testcontainers.redis import RedisContainer
 
-from example_app.cli import _run
+from example_app.server import run_server
 
 
 @dataclass
@@ -37,7 +37,7 @@ def redis_server() -> ServerInfo:
 def app_server(redis_server: ServerInfo) -> ServerInfo:
     port = random_port()
     proc = Process(
-        target=_run,
+        target=run_server,
         kwargs={
             "host": "127.0.0.1",
             "port": port,

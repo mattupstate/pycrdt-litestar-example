@@ -3,32 +3,39 @@ from playwright.sync_api import BrowserContext, Page
 from conftest import ServerInfo
 
 
-def codemirror_value(page: Page):
-    return page.evaluate("() => window.myEditor.getValue()")
+class EditorPage(Page):
+    def __init__(self, context: BrowserContext, goto: str) -> None:
+        self._page: Page = context.new_page()
+        self._page.goto(goto)
+
+    @property
+    def editor_content(self):
+        return self._page.evaluate("() => window.myEditor.getValue()")
+
+    def fill_editor(self, content: str):
+        self._page.get_by_role("textbox").fill(content)
+
+    def append_editor(self, content: str):
+        textfield = self._page.get_by_role("textbox")
+        textfield.focus()
+        self._page.keyboard.press("End")
+        textfield.type(content)
+
+    def __getattr__(self, name):
+        return getattr(self._page, name)
 
 
 def test_has_title(app_server: ServerInfo, context: BrowserContext):
-    # Peter does this
-    peters_page = context.new_page()
-    peters_page.goto(app_server.uri)
+    # Peter and Mary each open the editor
+    peter = EditorPage(context, app_server.uri)
+    mary = EditorPage(context, app_server.uri)
 
-    assert codemirror_value(peters_page) == ""
+    # When Peter leaves a note
+    peter.fill_editor("Peter was here.")
+    # Then Mary should see Peter's note
+    assert mary.editor_content == "Peter was here."
 
-    peters_page.get_by_role("textbox").fill("Peter was here.")
-    assert codemirror_value(peters_page) == "Peter was here."
-
-    # Then Mary does this
-    marys_page = context.new_page()
-    marys_page.goto(app_server.uri)
-
-    assert codemirror_value(marys_page) == "Peter was here."
-
-    textfield = marys_page.get_by_role("textbox")
-    textfield.focus()
-    marys_page.keyboard.press("End")
-    textfield.type(" Mary was here.")
-
-    assert codemirror_value(marys_page) == "Peter was here. Mary was here."
-
-    # Peter should then see this
-    assert codemirror_value(peters_page) == "Peter was here. Mary was here."
+    # When Mary appends Peter's note
+    mary.append_editor(" Mary was here.")
+    # Then Peter should see both notes
+    assert peter.editor_content == "Peter was here. Mary was here."

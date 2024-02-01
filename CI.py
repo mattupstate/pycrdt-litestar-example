@@ -29,15 +29,8 @@ async def test():
 
         python = (
             client.container()
-            .from_("python:3.12-slim")
+            .from_("python:3.12")
             .with_service_binding("redis", redis)
-            .with_exec(
-                [
-                    "/bin/sh",
-                    "-c",
-                    "apt-get update && apt-get install --no-install-recommends -y build-essential",
-                ]
-            )
             .with_exec(["pip", "install", "poetry"])
             .with_workdir("/src")
             .with_file("/src/poetry.lock", client.host().file("poetry.lock"))

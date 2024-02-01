@@ -2,20 +2,26 @@ import asyncio
 
 import uvicorn
 
-from example_app.factory import AppOptions, create_app
+from example_app.factory import AppConfig, create_app
+
+
+_default_app_config = AppConfig()
 
 
 def run_server(
-    host: str, port: int, redis_uri: str, debug: bool, reload: bool, log_level: str
+    host: str = "0.0.0.0",
+    port: int = 8000,
+    reload: bool = False,
+    log_level: str = "info",
+    app_config: AppConfig = _default_app_config,
 ):
-    options = AppOptions(redis_uri=redis_uri)
-    app = create_app(options)
-    config = uvicorn.Config(
-        app=app,
-        host=host,
-        port=port,
-        log_level=(log_level.lower()),
-        reload=reload,
+    server = uvicorn.Server(
+        uvicorn.Config(
+            app=create_app(app_config),
+            host=host,
+            port=port,
+            log_level=(log_level.lower()),
+            reload=reload,
+        )
     )
-    server = uvicorn.Server(config)
     asyncio.run(server.serve())

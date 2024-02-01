@@ -16,11 +16,12 @@ def create_redis_client(uri: str):
 
 
 @dataclass
-class AppOptions:
+class AppConfig:
+    debug: bool = False
     redis_uri: str = "redis://redis:6379/0"
 
 
-def create_app(options: AppOptions):
+def create_app(options: AppConfig):
     redis = create_redis_client(options.redis_uri)
 
     channels_plugin = ChannelsPlugin(

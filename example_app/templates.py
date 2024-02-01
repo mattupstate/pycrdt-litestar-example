@@ -1,27 +1,32 @@
 import json
 
+import structlog
+
 from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.template.config import TemplateConfig
 from pathlib import Path
 
-from example_app.etc import app_resource
+log: structlog.BoundLogger = structlog.get_logger()
 
 
-def webpack_bundle(_, name: str):
-    manifest_file = app_resource("static/bundles/manifest.json")
-    webpack_bundles = json.load(open(manifest_file))
-    return webpack_bundles[name]
+def make_callback(static_dir: str):
+    def webpack_bundle(_, name: str):
+        manifest_file = Path(static_dir) / "js/manifest.json"
+        webpack_bundles = json.load(open(manifest_file))
+        return webpack_bundles[name]
+
+    def callback(engine: JinjaTemplateEngine) -> None:
+        engine.register_template_callable(
+            key="webpack_bundle",
+            template_callable=webpack_bundle,
+        )
+
+    return callback
 
 
-def register_template_callables(engine: JinjaTemplateEngine) -> None:
-    engine.register_template_callable(
-        key="webpack_bundle",
-        template_callable=webpack_bundle,
+def create_template_config(template_dir: str, static_dir: str):
+    return TemplateConfig(
+        directory=template_dir,
+        engine=JinjaTemplateEngine,
+        engine_callback=make_callback(static_dir),
     )
-
-
-template_config = TemplateConfig(
-    directory=Path(__file__).parent / "templates",
-    engine=JinjaTemplateEngine,
-    engine_callback=register_template_callables,
-)

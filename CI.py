@@ -14,10 +14,12 @@ async def test():
                 ".venv",
                 ".vscode",
                 "**/*/__pycache__",
+                "dist",
                 "node_modules",
                 "test-results",
-                "example_app/static/bundles",
+                ".gitgnore",
                 "CI.py",
+                "docker-compose.yaml",
                 "webpack-stats.json",
             ],
         )
@@ -50,8 +52,8 @@ async def test():
             .with_exec(["poetry", "run", "playwright", "install", "chromium"])
             .with_directory("/src", source_code)
             .with_directory(
-                "/src/example_app/static/bundles",
-                javascript.directory("/src/example_app/static/bundles"),
+                "/opt/app/static/js",
+                javascript.directory("/src/dist/js"),
             )
             .with_exec(["poetry", "install", "--without", "playwright"])
             .with_exec(["poetry", "run", "pytest"])

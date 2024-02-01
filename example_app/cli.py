@@ -16,6 +16,15 @@ def cli():
 @click.option("--debug", is_flag=True, default=False, help="Enable debug mode")
 @click.option("--reload", is_flag=True, default=False, help="Reload code on changes")
 @click.option("--log-level", default="info", help="Log level")
-def run(host: str, port: int, debug: bool, reload: bool, log_level: str):
+@click.option(
+    "--static-dir",
+    default="/opt/app/static",
+    help="Filesystem path to static files directory",
+)
+def run(
+    host: str, port: int, debug: bool, reload: bool, log_level: str, static_dir: str
+):
     configure_logging(log_level)
-    run_server(host, port, reload, log_level, AppConfig(debug=debug))
+    run_server(
+        host, port, reload, log_level, AppConfig(debug=debug, static_dir=static_dir)
+    )

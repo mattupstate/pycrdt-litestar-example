@@ -15,16 +15,16 @@ RUN apt-get update \
 ADD pyproject.toml poetry.lock /usr/src/
 RUN pip install poetry
 RUN poetry config virtualenvs.in-project true
-RUN poetry install --no-ansi --no-dev && rm pyproject.toml poetry.lock
+RUN poetry install --no-ansi --without playwright,dev && rm pyproject.toml poetry.lock
 
 
 FROM python:3.12-slim
 WORKDIR /app
 COPY --from=python-build /usr/src /app
-COPY --from=static-build /usr/src/example_app/static/bundles /app/example_app/static/bundles
+COPY --from=static-build /usr/src/dist/js /opt/app/static/js
 ADD ./example_app /app/example_app
 RUN addgroup --gid 1000 app
 RUN adduser app -h /app -u 1000 -G app -DH
 USER 1000
 EXPOSE 8000
-ENTRYPOINT [".venv/bin/python", "-m", "example_app"]
+ENTRYPOINT [".venv/bin/python", "-m", "example_app", "run", "--debug", "--log-level", "debug"]

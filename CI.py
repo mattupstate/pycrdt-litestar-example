@@ -30,9 +30,6 @@ async def test():
         python = (
             client.container()
             .from_("python:3.12-slim")
-            .with_mounted_cache(
-                "/root/.cache", client.cache_volume("pycrdt-example-app-cache")
-            )
             .with_service_binding("redis", redis)
             .with_exec(
                 [

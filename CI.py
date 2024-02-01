@@ -7,7 +7,19 @@ import dagger
 async def test():
     async with dagger.Connection(dagger.Config(log_output=sys.stderr)) as client:
         source_code = client.host().directory(
-            ".", exclude=[".git", "node_modules", ".venv", "__ci__.py"]
+            ".",
+            exclude=[
+                ".git",
+                ".github",
+                ".venv",
+                ".vscode",
+                "**/*/__pycache__",
+                "node_modules",
+                "test-results",
+                "example_app/static/bundles",
+                "CI.py",
+                "webpack-stats.json",
+            ],
         )
 
         javascript = (
@@ -22,8 +34,6 @@ async def test():
             .with_directory("/src", source_code)
             .with_exec(["npx", "webpack", "--mode", "production"])
         )
-
-        await javascript.sync()
 
         redis = client.container().from_("redis:7").with_exposed_port(6379).as_service()
 

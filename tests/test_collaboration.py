@@ -25,7 +25,7 @@ class EditorPage(Page):
         return getattr(self._page, name)
 
 
-def test_has_title(app_server: ServerInfo, context: BrowserContext):
+def test_editor_is_collaborative(app_server: ServerInfo, context: BrowserContext):
     # Peter and Mary each open the editor
     peter = EditorPage(context, app_server.uri)
     mary = EditorPage(context, app_server.uri)

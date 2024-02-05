@@ -1,11 +1,11 @@
 name: test
 on:
   push:
-    branches: [main]
+    branches: [dagger]
 
 jobs:
   build:
-    name: test
+    name: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,4 +17,4 @@ jobs:
       - name: Install Dagger SDK
         run: pip install dagger-io
       - name: Run Dagger pipeline
-        run: dagger run python CI.py
+        run: dagger run python -m ci
